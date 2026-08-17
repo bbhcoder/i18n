@@ -87,8 +87,7 @@ jobs:
       - name: Rename and Prepare Asset
         shell: bash
         run: |
-          cd i18n_flutter/rust
-          mv target/${{ matrix.target }}/release/${{ matrix.output_name }} ../../${{ matrix.asset_name }}
+          mv target/${{ matrix.target }}/release/${{ matrix.output_name }} ${{ matrix.asset_name }}
 
       - name: Upload Binary to GitHub Release
         uses: softprops/action-gh-release@v1
