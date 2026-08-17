@@ -1,7 +1,8 @@
 name: i18n_flutter
-description: "A new Flutter plugin project."
-version: 0.0.1
-homepage:
+description: "A blazing fast, cross-platform i18n SDK powered by Rust and Flutter."
+version: 0.1.4
+homepage: https://github.com/bbhcoder/i18n
+repository: https://github.com/bbhcoder/i18n
 
 environment:
   sdk: ^3.12.2
@@ -10,10 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_rust_bridge: 2.12.0
+  # باز کردن محدوده ورژن برای جلوگیری از تداخل با بقیه پکیج‌ها
+  flutter_rust_bridge: ^2.12.0
   plugin_platform_interface: ^2.0.2
-  rust_lib_i18n_flutter:
-    path: rust_builder
+  
+  rust_lib_i18n_flutter: ^0.0.1
 
 dev_dependencies:
   flutter_test:

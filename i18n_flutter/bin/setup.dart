@@ -1,4 +1,5 @@
 // i18n_flutter/bin/setup.dart
+// ignore_for_file: avoid_print
 import 'dart:io';
 
 const String version = 'v0.1.4';
