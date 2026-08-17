@@ -25,19 +25,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   get rust_arc_decrement_strong_count_I18NEnginePtr => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine;
 
-  CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_I18NManagerPtr => wire
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager;
-
   @protected
   I18NEngine
   dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
-    dynamic raw,
-  );
-
-  @protected
-  I18NManager
-  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
     dynamic raw,
   );
 
@@ -56,12 +46,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   I18NEngine
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
-    dynamic raw,
-  );
-
-  @protected
-  I18NManager
-  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
     dynamic raw,
   );
 
@@ -93,12 +77,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  I18NManager
-  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   I18NEngine
   sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
     SseDeserializer deserializer,
@@ -113,12 +91,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   I18NEngine
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  I18NManager
-  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
     SseDeserializer deserializer,
   );
 
@@ -155,13 +127,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
-  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    I18NManager self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void
   sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
     I18NEngine self,
     SseSerializer serializer,
@@ -178,13 +143,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
     I18NEngine self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void
-  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    I18NManager self,
     SseSerializer serializer,
   );
 
@@ -236,22 +194,6 @@ class RustLibWire implements BaseWire {
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
         ptr,
       );
-
-  void
-  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    int ptr,
-  ) => wasmModule
-      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-        ptr,
-      );
-
-  void
-  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    int ptr,
-  ) => wasmModule
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-        ptr,
-      );
 }
 
 @JS('wasm_bindgen')
@@ -267,16 +209,6 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void
   rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
-    int ptr,
-  );
-
-  external void
-  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    int ptr,
-  );
-
-  external void
-  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
     int ptr,
   );
 }

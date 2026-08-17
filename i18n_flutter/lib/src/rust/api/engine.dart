@@ -14,10 +14,6 @@ abstract class I18NEngine implements RustOpaqueInterface {
     required String jsonString,
   });
 
-  I18NManager get inner;
-
-  set inner(I18NManager inner);
-
   String diagnostics();
 
   factory I18NEngine({required String defaultLocale, String? fallbackLocale}) =>
@@ -32,6 +28,3 @@ abstract class I18NEngine implements RustOpaqueInterface {
 
   String t({required String namespace, required String key, String? argsJson});
 }
-
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<I18nManager>>
-abstract class I18NManager implements RustOpaqueInterface {}

@@ -701,6 +701,7 @@ version = "0.1.0"
 dependencies = [
  "flutter_rust_bridge",
  "i18n-core",
+ "serde_json",
 ]
 
 [[package]]

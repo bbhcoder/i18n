@@ -6,7 +6,7 @@ use flutter_rust_bridge::frb;
 
 // FRB به صورت خودکار این Struct رو تبدیل به یه کلاس Dart می‌کنه!
 pub struct I18nEngine {
-    pub inner: I18nManager,
+    inner: I18nManager,
 }
 
 impl I18nEngine {

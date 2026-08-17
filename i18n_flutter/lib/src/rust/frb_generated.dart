@@ -67,11 +67,11 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => 1310686078;
+  int get rustContentHash => 178142770;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
-        stem: 'rust_lib_i18n_flutter',
+        stem: 'encheco_i18n',
         ioDirectory: 'rust/target/release/',
         webPrefix: 'pkg/',
         wasmBindgenName: 'wasm_bindgen',
@@ -84,15 +84,6 @@ abstract class RustLibApi extends BaseApi {
     required String locale,
     required String namespace,
     required String jsonString,
-  });
-
-  I18NManager crateApiEngineI18NEngineAutoAccessorGetInner({
-    required I18NEngine that,
-  });
-
-  void crateApiEngineI18NEngineAutoAccessorSetInner({
-    required I18NEngine that,
-    required I18NManager inner,
   });
 
   String crateApiEngineI18NEngineDiagnostics({required I18NEngine that});
@@ -130,14 +121,6 @@ abstract class RustLibApi extends BaseApi {
   get rust_arc_decrement_strong_count_I18NEngine;
 
   CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_I18NEnginePtr;
-
-  RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_I18NManager;
-
-  RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_I18NManager;
-
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_I18NManagerPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -186,74 +169,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  I18NManager crateApiEngineI18NEngineAutoAccessorGetInner({
-    required I18NEngine that,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
-            that,
-            serializer,
-          );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
-        },
-        codec: SseCodec(
-          decodeSuccessData:
-              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiEngineI18NEngineAutoAccessorGetInnerConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineI18NEngineAutoAccessorGetInnerConstMeta =>
-      const TaskConstMeta(
-        debugName: "I18NEngine_auto_accessor_get_inner",
-        argNames: ["that"],
-      );
-
-  @override
-  void crateApiEngineI18NEngineAutoAccessorSetInner({
-    required I18NEngine that,
-    required I18NManager inner,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
-            that,
-            serializer,
-          );
-          sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-            inner,
-            serializer,
-          );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiEngineI18NEngineAutoAccessorSetInnerConstMeta,
-        argValues: [that, inner],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineI18NEngineAutoAccessorSetInnerConstMeta =>
-      const TaskConstMeta(
-        debugName: "I18NEngine_auto_accessor_set_inner",
-        argNames: ["that", "inner"],
-      );
-
-  @override
   String crateApiEngineI18NEngineDiagnostics({required I18NEngine that}) {
     return handler.executeSync(
       SyncTask(
@@ -263,7 +178,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -293,7 +208,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(defaultLocale, serializer);
           sse_encode_opt_String(fallbackLocale, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -327,7 +242,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_bool(enabled, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -360,7 +275,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(locale, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -397,7 +312,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_String(namespace, serializer);
           sse_encode_String(key, serializer);
           sse_encode_opt_String(argsJson, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -422,7 +337,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(name, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -447,7 +362,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 8,
             port: port_,
           );
         },
@@ -473,14 +388,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   get rust_arc_decrement_strong_count_I18NEngine => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine;
 
-  RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_I18NManager => wire
-      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager;
-
-  RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_I18NManager => wire
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager;
-
   @protected
   I18NEngine
   dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
@@ -488,15 +395,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return I18NEngineImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  I18NManager
-  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return I18NManagerImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -524,15 +422,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return I18NEngineImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  I18NManager
-  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return I18NManagerImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -590,18 +479,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  I18NManager
-  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return I18NManagerImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
-  }
-
-  @protected
   I18NEngine
   sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
     SseDeserializer deserializer,
@@ -632,18 +509,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return I18NEngineImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
-  }
-
-  @protected
-  I18NManager
-  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return I18NManagerImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
@@ -718,19 +583,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    I18NManager self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as I18NManagerImpl).frbInternalSseEncode(move: true),
-      serializer,
-    );
-  }
-
-  @protected
-  void
   sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nEngine(
     I18NEngine self,
     SseSerializer serializer,
@@ -764,19 +616,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
       (self as I18NEngineImpl).frbInternalSseEncode(move: null),
-      serializer,
-    );
-  }
-
-  @protected
-  void
-  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerI18nManager(
-    I18NManager self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as I18NManagerImpl).frbInternalSseEncode(move: null),
       serializer,
     );
   }
@@ -867,12 +706,6 @@ class I18NEngineImpl extends RustOpaque implements I18NEngine {
     jsonString: jsonString,
   );
 
-  I18NManager get inner => RustLib.instance.api
-      .crateApiEngineI18NEngineAutoAccessorGetInner(that: this);
-
-  set inner(I18NManager inner) => RustLib.instance.api
-      .crateApiEngineI18NEngineAutoAccessorSetInner(that: this, inner: inner);
-
   String diagnostics() =>
       RustLib.instance.api.crateApiEngineI18NEngineDiagnostics(that: this);
 
@@ -891,25 +724,5 @@ class I18NEngineImpl extends RustOpaque implements I18NEngine {
     namespace: namespace,
     key: key,
     argsJson: argsJson,
-  );
-}
-
-@sealed
-class I18NManagerImpl extends RustOpaque implements I18NManager {
-  // Not to be used by end users
-  I18NManagerImpl.frbInternalDcoDecode(List<dynamic> wire)
-    : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  I18NManagerImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_I18NManager,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_I18NManager,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_I18NManagerPtr,
   );
 }
