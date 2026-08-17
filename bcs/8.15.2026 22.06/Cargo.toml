@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "i18n-core",
+    "i18n-node",
+    "i18n-wasm",
+]
+resolver = "2"

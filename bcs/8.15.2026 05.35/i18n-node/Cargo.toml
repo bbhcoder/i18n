@@ -1,0 +1,18 @@
+[package]
+name = "i18n-node"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+i18n-core = { path = "../i18n-core" }
+napi = { version = "2", features = ["serde-json"] }
+napi-derive = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# این بخش حیاتی است و باید دقیقاً با همین نام اضافه شود:
+[build-dependencies]
+napi-build = "2"

@@ -1,0 +1,15 @@
+[package]
+name = "rust_lib_i18n_flutter"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "encheco_i18n"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.12.0"
+i18n-core = { path = "../../i18n-core" }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

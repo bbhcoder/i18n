@@ -1,0 +1,53 @@
+{
+  "name": "i18n-sdk",
+  "version": "0.4.0",
+  "main": "server.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build:wasm": "cd ../i18n-wasm && wasm-pack build --target bundler --release && cp -r pkg/* ../i18n-node/wasm/",
+    "build:node:gnu": "npx napi build --target x86_64-unknown-linux-gnu --release",
+    "build:node:musl": "npx napi build --target x86_64-unknown-linux-musl --release",
+    "build:node:win": "CARGO=cargo-xwin npx napi build --target x86_64-pc-windows-msvc --release",
+    "build:node": "npm run build:node:gnu && npm run build:node:musl && npm run build:node:win",
+    "build:frameworks": "npx tsc -p tsconfig.frameworks.json",
+    "build:all": "npm run build:wasm && npm run build:node && npm run build:frameworks",
+    "release:patch": "npm version patch && npm run build:all && npm pack",
+    "release:minor": "npm version minor && npm run build:all && npm pack"
+  },
+  "exports": {
+    ".": {
+      "browser": "./wasm/i18n_wasm.js",
+      "import": "./server.js",
+      "require": "./server.js",
+      "default": "./server.js"
+    },
+    "./nuxt": {
+      "import": "./dist-frameworks/nuxt.js",
+      "require": "./dist-frameworks/nuxt.js",
+      "default": "./dist-frameworks/nuxt.js",
+      "types": "./dist-frameworks/nuxt.d.ts"
+    },
+    "./vite": {
+      "import": "./dist-frameworks/vite.js",
+      "types": "./dist-frameworks/vite.d.ts"
+    }
+  },
+  "files": [
+    "server.js",
+    "wasm",
+    "index.d.ts",
+    "dist-frameworks",
+    "*.node"
+  ],
+  "devDependencies": {
+    "@napi-rs/cli": "^3.8.6",
+    "@nuxt/kit": "^4.5.2",
+    "@types/node": "^26.2.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.2.1"
+  },
+  "dependencies": {
+    "vite-plugin-top-level-await": "^1.6.0",
+    "vite-plugin-wasm": "^3.6.0"
+  }
+}
