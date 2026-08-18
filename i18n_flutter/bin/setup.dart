@@ -1,7 +1,8 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
+import 'dart:isolate';
 
-const String version = 'v0.2.1'; // دقت کن که به ورژن تگ گیت‌هابت بخوره
+const String version = 'v0.2.1';
 const String githubUrl = 'https://github.com/bbhcoder/i18n/releases/download/$version';
 
 const String coiServiceWorkerContent = '''
@@ -14,7 +15,7 @@ Future<void> main() async {
 
   await setupDesktopBinaries();
   await setupAndroidBinaries();
-  await setupIosBinaries();
+  await setupAppleBinaries();
   await setupWebEnvironment();
 
   print('\n✅ Setup completed successfully!');
@@ -22,7 +23,22 @@ Future<void> main() async {
 }
 
 /// ---------------------------------------------------------
-/// بخش اول: دسکتاپ (ویندوز، لینوکس، مک)
+/// متد جادویی برای پیدا کردن مسیر مخفی پکیج در Pub-Cache
+/// ---------------------------------------------------------
+Future<String?> getPluginRootPath() async {
+  try {
+    final uri = await Isolate.resolvePackageUri(Uri.parse('package:i18n_flutter/'));
+    if (uri != null) {
+      return Directory(uri.toFilePath()).parent.path;
+    }
+  } catch (e) {
+    print('Error resolving package path: $e');
+  }
+  return null;
+}
+
+/// ---------------------------------------------------------
+/// بخش اول: دسکتاپ (ویندوز و لینوکس)
 /// ---------------------------------------------------------
 Future<void> setupDesktopBinaries() async {
   print('💻 Checking Desktop environment...');
@@ -36,14 +52,10 @@ Future<void> setupDesktopBinaries() async {
     downloadName = 'linux-x64-libencheco_i18n.so';
     saveName = 'libencheco_i18n.so';
   } else if (Platform.isMacOS) {
-    if (Platform.version.contains('arm64')) {
-      downloadName = 'macos-arm64-libencheco_i18n.dylib';
-    } else {
-      downloadName = 'macos-x64-libencheco_i18n.dylib';
-    }
-    saveName = 'libencheco_i18n.dylib';
+    // مک در بخش AppleBinaries هندل می‌شود
+    return; 
   } else {
-    print('   - Not a desktop platform. Skipping desktop binary download.');
+    print('   - Not a desktop platform. Skipping Windows/Linux binary download.');
     return;
   }
 
@@ -86,33 +98,60 @@ Future<void> setupAndroidBinaries() async {
 }
 
 /// ---------------------------------------------------------
-/// بخش سوم: iOS
+/// بخش سوم: اپل (macOS و iOS) با تزریق مستقیم به Pub-Cache
 /// ---------------------------------------------------------
-Future<void> setupIosBinaries() async {
-  final iosDir = Directory('${Directory.current.path}/ios');
-  if (!iosDir.existsSync()) {
-    print('🍏 iOS folder not found. Skipping iOS setup.');
+Future<void> setupAppleBinaries() async {
+  if (!Platform.isMacOS) return;
+
+  final pluginPath = await getPluginRootPath();
+  if (pluginPath == null) {
+    print('   - ❌ Could not resolve i18n_flutter package path in pub-cache.');
     return;
   }
 
-  print('\n🍏 Configuring iOS environment...');
-  final zipName = 'ios-encheco_i18n.xcframework.zip';
-  final zipPath = '${iosDir.path}/$zipName';
+  print('\n🍏 Configuring Apple (iOS & macOS) environment inside pub-cache...');
 
-  print('   - Downloading XCFramework for iOS...');
-  await downloadFile('$githubUrl/$zipName', zipPath);
-
-  if (Platform.isMacOS) {
-    print('   - Extracting XCFramework...');
+  // --- iOS ---
+  final iosDir = Directory('$pluginPath/ios');
+  if (iosDir.existsSync()) {
+    final zipPath = '${iosDir.path}/ios-encheco_i18n.xcframework.zip';
+    print('   - Downloading XCFramework for iOS...');
+    await downloadFile('$githubUrl/ios-encheco_i18n.xcframework.zip', zipPath);
+    
+    print('   - Extracting iOS XCFramework...');
     final result = Process.runSync('unzip', ['-o', zipPath, '-d', iosDir.path]);
     if (result.exitCode != 0) {
       print('     ❌ Failed to extract zip: ${result.stderr}');
     } else {
       print('     ✔️ XCFramework extracted successfully.');
-      File(zipPath).deleteSync(); // حذف فایل زیپ پس از استخراج موفق
+      File(zipPath).deleteSync();
     }
-  } else {
-    print('   - ⚠️ Note: Extraction skipped because you are not on macOS.');
+  }
+
+  // --- macOS ---
+  final macosDir = Directory('$pluginPath/macos');
+  if (macosDir.existsSync()) {
+    print('   - Downloading macOS binaries...');
+    final arm64Path = '${macosDir.path}/arm64.dylib';
+    final x64Path = '${macosDir.path}/x64.dylib';
+    
+    await downloadFile('$githubUrl/macos-arm64-libencheco_i18n.dylib', arm64Path);
+    await downloadFile('$githubUrl/macos-x64-libencheco_i18n.dylib', x64Path);
+
+    print('   - Creating Universal Binary (Fat Dylib) for macOS...');
+    final finalDylib = '${macosDir.path}/libencheco_i18n.dylib';
+    
+    // اگر فایل‌های دانلود شده وجود داشته باشند، لیپو را اجرا کن
+    if (File(arm64Path).existsSync() && File(x64Path).existsSync()) {
+      final result = Process.runSync('lipo', ['-create', '-output', finalDylib, arm64Path, x64Path]);
+      if (result.exitCode == 0) {
+        print('     ✔️ Universal macOS binary created.');
+        File(arm64Path).deleteSync();
+        File(x64Path).deleteSync();
+      } else {
+        print('     ❌ Failed to create universal binary: ${result.stderr}');
+      }
+    }
   }
 }
 
@@ -172,7 +211,7 @@ Future<void> downloadFile(String url, String savePath) async {
       await response.pipe(file.openWrite());
       print('     ✔️ Downloaded to: $savePath');
     } else {
-      print('     ❌ Failed to download. HTTP Status: ${response.statusCode}');
+      print('     ❌ Failed to download. HTTP Status: ${response.statusCode} - URL: $url');
     }
   } catch (e) {
     print('     ❌ Error downloading file: $e');

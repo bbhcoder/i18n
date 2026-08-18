@@ -17,7 +17,7 @@ A new Flutter plugin project that provides blazing fast internationalization cap
   s.source_files = 'i18n_flutter/Sources/i18n_flutter/**/*'
 
   # 👇 این خط اضافه شد تا فلاتر بتونه فایل dylib دانلود شده در ریشه پروژه رو برای مک لینک کنه
-  s.vendored_libraries = '../libencheco_i18n.dylib'
+  s.vendored_libraries = 'libencheco_i18n.dylib'
 
   # If your plugin requires a privacy manifest, for example if it collects user
   # data, update the PrivacyInfo.xcprivacy file to describe your plugin's
