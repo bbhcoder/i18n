@@ -66,7 +66,7 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - name: Build WASM
         working-directory: i18n_flutter/rust
-        run: wasm-pack build -t no-modules -d ../web/pkg --no-typescript --out-name encheco_i18n --dev -- -Z build-std=std,panic_abort
+        run: wasm-pack build . -t no-modules -d ../web/pkg --no-typescript --out-name encheco_i18n --dev -- -Z build-std=std,panic_abort
       - name: Upload Artifact JS
         uses: actions/upload-artifact@v4
         with:
