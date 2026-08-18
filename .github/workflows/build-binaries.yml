@@ -12,6 +12,7 @@ jobs:
   build-native:
     name: Build Native Binaries
     strategy:
+      fail-fast: false  # اگه یکیش خطا داد، بقیه رو کنسل نکن
       matrix:
         include:
           - os: ubuntu-latest
@@ -46,7 +47,11 @@ jobs:
         run: cargo build --release --target ${{ matrix.target }}
       - name: Rename Asset
         shell: bash
-        run: mv i18n_flutter/rust/target/${{ matrix.target }}/release/${{ matrix.output_name }} ${{ matrix.asset_name }}
+        run: |
+          # جستجوی هوشمندانه برای پیدا کردن فایل خروجی در پوشه ریلیز
+          FILE_PATH=$(find . -type f -name "${{ matrix.output_name }}" | grep "/release/" | head -n 1)
+          echo "Found binary at: $FILE_PATH"
+          mv "$FILE_PATH" ${{ matrix.asset_name }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -66,6 +71,7 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - name: Build WASM
         working-directory: i18n_flutter/rust
+        # اضافه شدن نقطه (.) برای مشخص کردن مسیر جاری
         run: wasm-pack build . -t no-modules -d ../web/pkg --no-typescript --out-name encheco_i18n --dev -- -Z build-std=std,panic_abort
       - name: Upload Artifact JS
         uses: actions/upload-artifact@v4
