@@ -141,43 +141,16 @@ Future setupAppleBinaries() async {
 
 Future setupWebEnvironment() async {
   final webDir = Directory('${Directory.current.path}/web');
-  
-  if (!webDir.existsSync()) {
-    print('\n🌐 Web folder not found. Skipping web setup.');
-    return;
-  }
+  if (!webDir.existsSync()) return;
 
   print('\n🌐 Configuring Web environment...');
-
   final pkgDir = Directory('${webDir.path}/pkg');
-  if (!pkgDir.existsSync()) {
-    pkgDir.createSync(recursive: true);
-  }
+  if (!pkgDir.existsSync()) pkgDir.createSync(recursive: true);
 
   print('   - Downloading WebAssembly files...');
   await downloadFile('$githubUrl/encheco_i18n.js', '${pkgDir.path}/encheco_i18n.js');
   await downloadFile('$githubUrl/encheco_i18n_bg.wasm', '${pkgDir.path}/encheco_i18n_bg.wasm');
-
-  final swFile = File('${webDir.path}/coi-serviceworker.js');
-  if (!swFile.existsSync()) {
-    swFile.writeAsStringSync(coiServiceWorkerContent);
-    print('   - Created coi-serviceworker.js for Cross-Origin headers.');
-  } else {
-    print('   - coi-serviceworker.js already exists.');
-  }
-
-  final indexHtml = File('${webDir.path}/index.html');
-  if (indexHtml.existsSync()) {
-    String htmlContent = indexHtml.readAsStringSync();
-    if (!htmlContent.contains('coi-serviceworker.js')) {
-      htmlContent = htmlContent.replaceFirst(
-        '', 
-        '\n  '
-      );
-      indexHtml.writeAsStringSync(htmlContent);
-      print('   - Injected Service Worker into web/index.html');
-    }
-  }
+  print('   - Web setup complete successfully.');
 }
 
 Future downloadFile(String url, String savePath) async {
