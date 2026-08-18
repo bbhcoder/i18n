@@ -46,7 +46,7 @@ Or add it manually to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  i18n_flutter: ^0.2.0
+  i18n_flutter: ^0.2.1
 ```
 
 
