@@ -4,17 +4,20 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'i18n_flutter'
-  s.version          = '0.0.1'
-  s.summary          = 'A new Flutter plugin project.'
+  s.version          = '0.2.1'
+  s.summary          = 'A blazing fast, cross-platform i18n engine using Rust under the hood.'
   s.description      = <<-DESC
-A new Flutter plugin project.
+A new Flutter plugin project that provides blazing fast internationalization capabilities natively on Android, iOS, Windows, macOS, Linux, and Web using WebAssembly.
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/bbhcoder/i18n'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Arsalan Shoaei' => 'arsalanshoaei@gmail.com' }
 
   s.source           = { :path => '.' }
   s.source_files = 'i18n_flutter/Sources/i18n_flutter/**/*'
+
+  # 👇 این خط اضافه شد تا فلاتر بتونه فایل dylib دانلود شده در ریشه پروژه رو برای مک لینک کنه
+  s.vendored_libraries = '../libencheco_i18n.dylib'
 
   # If your plugin requires a privacy manifest, for example if it collects user
   # data, update the PrivacyInfo.xcprivacy file to describe your plugin's

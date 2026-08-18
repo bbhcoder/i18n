@@ -12,7 +12,7 @@ jobs:
   build-native:
     name: Build Native Binaries
     strategy:
-      fail-fast: false  # اگه یکیش خطا داد، بقیه رو کنسل نکن
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
@@ -58,6 +58,71 @@ jobs:
           name: ${{ matrix.asset_name }}
           path: ${{ matrix.asset_name }}
 
+  build-android:
+    name: Build Android Binaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android, armv7-linux-androideabi, x86_64-linux-android
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r25c
+      - name: Build Android Targets
+        working-directory: i18n_flutter/rust
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        run: cargo ndk -t arm64-v8a -t armeabi-v7a -t x86_64 -o jniLibs build --release
+      - name: Rename Artifacts
+        run: |
+          mv i18n_flutter/rust/jniLibs/arm64-v8a/libencheco_i18n.so android-arm64-libencheco_i18n.so
+          mv i18n_flutter/rust/jniLibs/armeabi-v7a/libencheco_i18n.so android-arm-libencheco_i18n.so
+          mv i18n_flutter/rust/jniLibs/x86_64/libencheco_i18n.so android-x64-libencheco_i18n.so
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-binaries
+          path: android-*-libencheco_i18n.so
+
+  build-ios:
+    name: Build iOS XCFramework
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios, x86_64-apple-ios, aarch64-apple-ios-sim
+      - name: Build iOS Targets
+        working-directory: i18n_flutter/rust
+        run: |
+          cargo build --release --target aarch64-apple-ios
+          cargo build --release --target x86_64-apple-ios
+          cargo build --release --target aarch64-apple-ios-sim
+      - name: Create XCFramework
+        working-directory: i18n_flutter/rust
+        run: |
+          # ترکیب معماری‌های شبیه‌ساز (اینتل و M1)
+          lipo -create -output target/libencheco_i18n_sim.a target/x86_64-apple-ios/release/libencheco_i18n.a target/aarch64-apple-ios-sim/release/libencheco_i18n.a
+          # ساخت فریم‌ورک یکپارچه اپل
+          xcodebuild -create-xcframework \
+            -library target/aarch64-apple-ios/release/libencheco_i18n.a \
+            -library target/libencheco_i18n_sim.a \
+            -output encheco_i18n.xcframework
+          # فشرده‌سازی جهت آپلود
+          zip -r ios-encheco_i18n.xcframework.zip encheco_i18n.xcframework
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-encheco_i18n.xcframework.zip
+          path: i18n_flutter/rust/ios-encheco_i18n.xcframework.zip
+
   build-web:
     name: Build WebAssembly
     runs-on: ubuntu-latest
@@ -87,7 +152,7 @@ jobs:
 
   release:
     name: Create Release
-    needs: [build-native, build-web]
+    needs: [build-native, build-web, build-android, build-ios]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
