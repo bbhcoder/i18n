@@ -46,7 +46,7 @@ Or add it manually to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  i18n_flutter: ^0.1.6
+  i18n_flutter: ^0.1.8
 ```
 
 
@@ -61,6 +61,9 @@ This will automatically fetch the correct native binaries (and WebAssembly files
 
 ```bash
 dart run i18n_flutter:setup
+```
+
+---
 
 ## 🖥️ Supported Platforms
 
