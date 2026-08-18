@@ -138,7 +138,7 @@ jobs:
         run: |
           mkdir -p .cargo
           echo '[target.wasm32-unknown-unknown]' > .cargo/config.toml
-          echo 'rustflags = ["-C", "target-feature=+atomics,+bulk-memory,+mutable-globals", "-C", "link-arg=--shared-memory", "-C", "link-arg=--max-memory=67108864", "-C", "link-arg=--export=__heap_base", "-C", "link-arg=--export=__data_end"]' >> .cargo/config.toml
+          echo 'rustflags = ["-C", "target-feature=+atomics,+bulk-memory,+mutable-globals", "-C", "link-arg=--shared-memory", "-C", "link-arg=--import-memory", "-C", "link-arg=--max-memory=67108864", "-C", "link-arg=--export=__heap_base", "-C", "link-arg=--export=__data_end"]' >> .cargo/config.toml
       - name: Build WASM
         working-directory: i18n_flutter/rust
         run: wasm-pack build . -t no-modules -d ../web/pkg --no-typescript --out-name encheco_i18n --release -- -Z build-std=std,panic_abort
