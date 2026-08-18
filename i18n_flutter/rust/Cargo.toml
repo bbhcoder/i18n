@@ -14,3 +14,6 @@ serde_json = "1.0"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false

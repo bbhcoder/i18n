@@ -100,13 +100,12 @@ jobs:
         with:
           targets: aarch64-apple-ios, x86_64-apple-ios, aarch64-apple-ios-sim
       - name: Build iOS Targets
-        working-directory: i18n_flutter/rust
+        # با اجرای این دستورات در ریشه، فایل‌ها دقیقاً در فولدر target اصلی قرار می‌گیرند
         run: |
-          cargo build --release --target aarch64-apple-ios
-          cargo build --release --target x86_64-apple-ios
-          cargo build --release --target aarch64-apple-ios-sim
+          cargo build -p rust_lib_i18n_flutter --release --target aarch64-apple-ios
+          cargo build -p rust_lib_i18n_flutter --release --target x86_64-apple-ios
+          cargo build -p rust_lib_i18n_flutter --release --target aarch64-apple-ios-sim
       - name: Create XCFramework
-        working-directory: i18n_flutter/rust
         run: |
           # ترکیب معماری‌های شبیه‌ساز (اینتل و M1)
           lipo -create -output target/libencheco_i18n_sim.a target/x86_64-apple-ios/release/libencheco_i18n.a target/aarch64-apple-ios-sim/release/libencheco_i18n.a
@@ -121,7 +120,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-encheco_i18n.xcframework.zip
-          path: i18n_flutter/rust/ios-encheco_i18n.xcframework.zip
+          path: ios-encheco_i18n.xcframework.zip
 
   build-web:
     name: Build WebAssembly
