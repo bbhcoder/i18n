@@ -46,7 +46,7 @@ Or add it manually to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  i18n_flutter: ^0.1.8
+  i18n_flutter: ^0.2.0
 ```
 
 
@@ -74,6 +74,7 @@ dart run i18n_flutter:setup
 | Linux | ✅ |
 | macOS | ✅ |
 | Windows | ✅ |
+| Web | ✅ |
 
 ---
 
