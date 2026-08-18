@@ -2,7 +2,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
-const String version = 'v0.2.1';
+const String version = 'v0.2.2';
 const String githubUrl = 'https://github.com/bbhcoder/i18n/releases/download/$version';
 
 const String coiServiceWorkerContent = '''
@@ -10,7 +10,7 @@ const String coiServiceWorkerContent = '''
 if(typeof window==="undefined"){self.addEventListener("install",()=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("message",e=>{if(e.data==="deregister"){self.registration.unregister().then(()=>self.clients.matchAll()).then(clients=>{clients.forEach(client=>client.navigate(client.url))})}});self.addEventListener("fetch",function(e){if(e.request.cache==="only-if-cached"&&e.request.mode!=="same-origin"){return}e.respondWith(fetch(e.request).then(r=>{if(r.status===0){return r}const headers=new Headers(r.headers);headers.set("Cross-Origin-Embedder-Policy","require-corp");headers.set("Cross-Origin-Opener-Policy","same-origin");return new Response(r.body,{status:r.status,statusText:r.statusText,headers})}).catch(e=>console.error(e)))});}else{(()=>{const e=window.document.currentScript!=undefined?window.document.currentScript.src:"";if(window.sessionStorage&&window.sessionStorage.getItem("coiReloadedBySelf")){window.sessionStorage.removeItem("coiReloadedBySelf")}else if(e){if(window.crossOriginIsolated!==false)return;window.sessionStorage.setItem("coiReloadedBySelf","true");if(window.isSecureContext){window.navigator.serviceWorker.register(e).then(e=>{e.addEventListener("updatefound",()=>{console.log("Reloading page to make use of updated COOP/COEP Service Worker.");window.sessionStorage.removeItem("coiReloadedBySelf");window.location.reload()});if(e.active&&!window.crossOriginIsolated){console.log("Reloading page to make use of COOP/COEP Service Worker.");window.location.reload()}},e=>{console.error("COOP/COEP Service Worker failed to register:",e)})}else if(!window.isSecureContext){console.log("COOP/COEP Service Worker not registered, a secure context is required.")}}})()}
 ''';
 
-Future<void> main() async {
+Future main() async {
   print('🚀 Starting i18n_flutter automated setup...\n');
 
   await setupDesktopBinaries();
@@ -22,10 +22,7 @@ Future<void> main() async {
   print('🎉 You can now run your app on ANY platform without extra configuration.');
 }
 
-/// ---------------------------------------------------------
-/// متد جادویی برای پیدا کردن مسیر مخفی پکیج در Pub-Cache
-/// ---------------------------------------------------------
-Future<String?> getPluginRootPath() async {
+Future getPluginRootPath() async {
   try {
     final uri = await Isolate.resolvePackageUri(Uri.parse('package:i18n_flutter/'));
     if (uri != null) {
@@ -37,10 +34,7 @@ Future<String?> getPluginRootPath() async {
   return null;
 }
 
-/// ---------------------------------------------------------
-/// بخش اول: دسکتاپ (ویندوز و لینوکس)
-/// ---------------------------------------------------------
-Future<void> setupDesktopBinaries() async {
+Future setupDesktopBinaries() async {
   print('💻 Checking Desktop environment...');
   String downloadName = '';
   String saveName = '';
@@ -52,7 +46,6 @@ Future<void> setupDesktopBinaries() async {
     downloadName = 'linux-x64-libencheco_i18n.so';
     saveName = 'libencheco_i18n.so';
   } else if (Platform.isMacOS) {
-    // مک در بخش AppleBinaries هندل می‌شود
     return; 
   } else {
     print('   - Not a desktop platform. Skipping Windows/Linux binary download.');
@@ -64,10 +57,7 @@ Future<void> setupDesktopBinaries() async {
   await downloadFile('$githubUrl/$downloadName', savePath);
 }
 
-/// ---------------------------------------------------------
-/// بخش دوم: اندروید
-/// ---------------------------------------------------------
-Future<void> setupAndroidBinaries() async {
+Future setupAndroidBinaries() async {
   final androidDir = Directory('${Directory.current.path}/android/app/src/main/jniLibs');
   
   if (!Directory('${Directory.current.path}/android').existsSync()) {
@@ -97,10 +87,7 @@ Future<void> setupAndroidBinaries() async {
   }
 }
 
-/// ---------------------------------------------------------
-/// بخش سوم: اپل (macOS و iOS) با تزریق مستقیم به Pub-Cache
-/// ---------------------------------------------------------
-Future<void> setupAppleBinaries() async {
+Future setupAppleBinaries() async {
   if (!Platform.isMacOS) return;
 
   final pluginPath = await getPluginRootPath();
@@ -141,24 +128,18 @@ Future<void> setupAppleBinaries() async {
     print('   - Creating Universal Binary (Fat Dylib) for macOS...');
     final finalDylib = '${macosDir.path}/libencheco_i18n.dylib';
     
-    // اگر فایل‌های دانلود شده وجود داشته باشند، لیپو را اجرا کن
     if (File(arm64Path).existsSync() && File(x64Path).existsSync()) {
       final result = Process.runSync('lipo', ['-create', '-output', finalDylib, arm64Path, x64Path]);
       if (result.exitCode == 0) {
         print('     ✔️ Universal macOS binary created.');
         File(arm64Path).deleteSync();
         File(x64Path).deleteSync();
-      } else {
-        print('     ❌ Failed to create universal binary: ${result.stderr}');
       }
     }
   }
 }
 
-/// ---------------------------------------------------------
-/// بخش چهارم: وب (WASM)
-/// ---------------------------------------------------------
-Future<void> setupWebEnvironment() async {
+Future setupWebEnvironment() async {
   final webDir = Directory('${Directory.current.path}/web');
   
   if (!webDir.existsSync()) {
@@ -190,8 +171,8 @@ Future<void> setupWebEnvironment() async {
     String htmlContent = indexHtml.readAsStringSync();
     if (!htmlContent.contains('coi-serviceworker.js')) {
       htmlContent = htmlContent.replaceFirst(
-        '<head>', 
-        '<head>\n  <script src="coi-serviceworker.js"></script>'
+        '', 
+        '\n  '
       );
       indexHtml.writeAsStringSync(htmlContent);
       print('   - Injected Service Worker into web/index.html');
@@ -199,10 +180,7 @@ Future<void> setupWebEnvironment() async {
   }
 }
 
-/// ---------------------------------------------------------
-/// متد کمکی: دانلود فایل
-/// ---------------------------------------------------------
-Future<void> downloadFile(String url, String savePath) async {
+Future downloadFile(String url, String savePath) async {
   try {
     final request = await HttpClient().getUrl(Uri.parse(url));
     final response = await request.close();

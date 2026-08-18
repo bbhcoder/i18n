@@ -19,7 +19,6 @@ lol_alloc = "0.4"
 wasm-opt = [
     "-Oz",
     "--enable-bulk-memory",
-    "--enable-threads",
     "--enable-nontrapping-float-to-int",
     "--enable-simd"
 ]
