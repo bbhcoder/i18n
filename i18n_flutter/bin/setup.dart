@@ -2,7 +2,7 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
 
-const String version = 'v0.1.5';
+const String version = 'v0.1.6';
 const String githubUrl = 'https://github.com/bbhcoder/i18n/releases/download/$version';
 
 // کد جاوااسکریپت Service Worker برای تزریق هدرهای Cross-Origin
