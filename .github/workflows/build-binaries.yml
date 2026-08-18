@@ -122,7 +122,7 @@ jobs:
           name: ios-encheco_i18n.xcframework.zip
           path: ios-encheco_i18n.xcframework.zip
 
- build-web:
+  build-web:
     name: Build WebAssembly
     runs-on: ubuntu-latest
     steps:
@@ -133,10 +133,14 @@ jobs:
           components: rust-src
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: Configure Rust for WebAssembly Threads
+        working-directory: i18n_flutter/rust
+        run: |
+          mkdir -p .cargo
+          echo '[target.wasm32-unknown-unknown]' > .cargo/config.toml
+          echo 'rustflags = ["-C", "target-feature=+atomics,+bulk-memory,+mutable-globals", "-C", "link-arg=--shared-memory", "-C", "link-arg=--max-memory=67108864", "-C", "link-arg=--export=__heap_base", "-C", "link-arg=--export=__data_end"]' >> .cargo/config.toml
       - name: Build WASM
         working-directory: i18n_flutter/rust
-        env:
-          RUSTFLAGS: '-C target-feature=+atomics,+bulk-memory,+mutable-globals -C link-arg=--shared-memory -C link-arg=--max-memory=67108864 -C link-arg=--export=__heap_base -C link-arg=--export=__data_end'
         run: wasm-pack build . -t no-modules -d ../web/pkg --no-typescript --out-name encheco_i18n --release -- -Z build-std=std,panic_abort
       - name: Upload Artifact JS
         uses: actions/upload-artifact@v4
