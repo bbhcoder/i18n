@@ -46,8 +46,17 @@ Or add it manually to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  i18n_flutter: ^0.1.4
+  i18n_flutter: ^0.1.6
 ```
+
+## 🛠️ Post‑Install Setup
+
+Since this package uses a high‑performance pre‑compiled Rust core, you must run the following setup script after installation.  
+This will automatically fetch the correct native binaries (and WebAssembly files) for your target platform:
+
+```bash
+dart run i18n_flutter:setup
+
 
 The package ships with prebuilt Rust bindings wired up through `flutter_rust_bridge` — no local Rust toolchain is required to consume it.
 

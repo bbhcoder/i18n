@@ -1,3 +1,3 @@
-## 0.1.5
-
-* Initial release of i18n_flutter powered by Rust pre-compiled binaries.
+## 0.1.6
+* Added automated WebAssembly (WASM) setup.
+* Added auto-injection of COI Service Worker for web builds.

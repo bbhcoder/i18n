@@ -1,6 +1,5 @@
 name: Build Pre-compiled Binaries
 
-# این اکشن فقط زمانی اجرا میشه که یه تگ جدید (مثلاً v0.1.0) پوش کنی
 on:
   push:
     tags:
@@ -10,91 +9,90 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    name: Build for ${{ matrix.target }}
-    runs-on: ${{ matrix.os }}
+  build-native:
+    name: Build Native Binaries
     strategy:
-      fail-fast: false
       matrix:
         include:
-          # --- Windows ---
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            output_name: encheco_i18n.dll
-            asset_name: windows-x64-encheco_i18n.dll
-          
-          # --- Linux ---
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             output_name: libencheco_i18n.so
             asset_name: linux-x64-libencheco_i18n.so
-            
-          # --- macOS ---
+
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            output_name: encheco_i18n.dll
+            asset_name: windows-x64-encheco_i18n.dll
+
           - os: macos-latest
             target: aarch64-apple-darwin
             output_name: libencheco_i18n.dylib
             asset_name: macos-arm64-libencheco_i18n.dylib
+
           - os: macos-latest
             target: x86_64-apple-darwin
             output_name: libencheco_i18n.dylib
             asset_name: macos-x64-libencheco_i18n.dylib
-
-          # --- iOS ---
-          - os: macos-latest
-            target: aarch64-apple-ios
-            output_name: libencheco_i18n.a
-            asset_name: ios-arm64-libencheco_i18n.a
-          - os: macos-latest
-            target: aarch64-apple-ios-sim
-            output_name: libencheco_i18n.a
-            asset_name: ios-sim-arm64-libencheco_i18n.a
-
-          # --- Android ---
-          - os: ubuntu-latest
-            target: aarch64-linux-android
-            output_name: libencheco_i18n.so
-            asset_name: android-arm64-libencheco_i18n.so
-          - os: ubuntu-latest
-            target: armv7-linux-androideabi
-            output_name: libencheco_i18n.so
-            asset_name: android-armv7-libencheco_i18n.so
-
+            
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
+      - uses: actions/checkout@v4
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-
-      # برای اندروید نیاز به NDK داریم
-      - name: Install cargo-ndk (Android only)
-        if: contains(matrix.target, 'android')
-        run: cargo install cargo-ndk
-
-      # کامپایل مک، ویندوز، لینوکس و iOS
-      - name: Build target (Desktop & iOS)
-        if: "!contains(matrix.target, 'android')"
-        run: |
-          cd i18n_flutter/rust
-          cargo build --release --target ${{ matrix.target }}
-
-      # کامپایل اندروید
-      - name: Build target (Android)
-        if: contains(matrix.target, 'android')
-        run: |
-          cd i18n_flutter/rust
-          cargo ndk -t ${{ matrix.target }} build --release
-
-      - name: Rename and Prepare Asset
+      - name: Build Binary
+        working-directory: i18n_flutter/rust
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Rename Asset
         shell: bash
-        run: |
-          mv target/${{ matrix.target }}/release/${{ matrix.output_name }} ${{ matrix.asset_name }}
+        run: mv i18n_flutter/rust/target/${{ matrix.target }}/release/${{ matrix.output_name }} ${{ matrix.asset_name }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: ${{ matrix.asset_name }}
 
-      - name: Upload Binary to GitHub Release
+  build-web:
+    name: Build WebAssembly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust (Nightly for build-std)
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rust-src
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: Build WASM
+        working-directory: i18n_flutter/rust
+        run: wasm-pack build -t no-modules -d ../web/pkg --no-typescript --out-name encheco_i18n --dev -- -Z build-std=std,panic_abort
+      - name: Upload Artifact JS
+        uses: actions/upload-artifact@v4
+        with:
+          name: encheco_i18n.js
+          path: i18n_flutter/web/pkg/encheco_i18n.js
+      - name: Upload Artifact WASM
+        uses: actions/upload-artifact@v4
+        with:
+          name: encheco_i18n_bg.wasm
+          path: i18n_flutter/web/pkg/encheco_i18n_bg.wasm
+
+  release:
+    name: Create Release
+    needs: [build-native, build-web]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - name: Flatten Artifacts
+        run: |
+          mkdir release_assets
+          find dist -type f -exec mv {} release_assets/ \;
+      - name: Publish Release
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ matrix.asset_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: release_assets/*
