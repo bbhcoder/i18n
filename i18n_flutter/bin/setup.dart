@@ -2,7 +2,7 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
 
-const String version = 'v0.1.9';
+const String version = 'v0.2.0';
 const String githubUrl = 'https://github.com/bbhcoder/i18n/releases/download/$version';
 
 // کد جاوااسکریپت Service Worker برای تزریق هدرهای Cross-Origin
@@ -22,25 +22,35 @@ Future<void> main() async {
 }
 
 /// ---------------------------------------------------------
-/// بخش اول: دانلود باینری‌های دسکتاپ (از کد قبلی شما)
+/// بخش اول: دانلود باینری‌های دسکتاپ با نام‌گذاری اصلاح‌شده
 /// ---------------------------------------------------------
 Future<void> setupDesktopBinaries() async {
   print('💻 Checking Desktop environment...');
-  String fileName = '';
+  String downloadName = '';
+  String saveName = '';
   
   if (Platform.isWindows) {
-    fileName = 'windows-x64-encheco_i18n.dll';
+    downloadName = 'windows-x64-encheco_i18n.dll';
+    saveName = 'encheco_i18n.dll';
   } else if (Platform.isLinux) {
-    fileName = 'linux-x64-libencheco_i18n.so';
+    downloadName = 'linux-x64-libencheco_i18n.so';
+    saveName = 'libencheco_i18n.so';
   } else if (Platform.isMacOS) {
-    fileName = 'macos-x64-libencheco_i18n.dylib';
+    // تشخیص معماری پردازنده مک (M1/M2 در برابر Intel)
+    // به صورت پیش‌فرض x64 رو در نظر می‌گیریم مگر اینکه arm64 باشه
+    if (Platform.version.contains('arm64')) {
+      downloadName = 'macos-arm64-libencheco_i18n.dylib';
+    } else {
+      downloadName = 'macos-x64-libencheco_i18n.dylib';
+    }
+    saveName = 'libencheco_i18n.dylib';
   } else {
     print('   - Mobile platform detected (Android/iOS). Native builds are handled via Gradle/CocoaPods. Skipping binary download.');
     return;
   }
 
-  final url = '$githubUrl/$fileName';
-  final savePath = '${Directory.current.path}/$fileName';
+  final url = '$githubUrl/$downloadName';
+  final savePath = '${Directory.current.path}/$saveName';
 
   print('   - Downloading binary for ${Platform.operatingSystem}...');
   await downloadFile(url, savePath);
