@@ -136,7 +136,7 @@ jobs:
       - name: Build WASM
         working-directory: i18n_flutter/rust
         env:
-          RUSTFLAGS: '-C target-feature=+atomics,+bulk-memory,+mutable-globals -C link-arg=--shared-memory -C link-arg=--max-memory=67108864'
+          RUSTFLAGS: '-C target-feature=+atomics,+bulk-memory,+mutable-globals -C link-arg=--shared-memory -C link-arg=--max-memory=67108864 -C link-arg=--export=__heap_base -C link-arg=--export=__data_end'
         run: wasm-pack build . -t no-modules -d ../web/pkg --no-typescript --out-name encheco_i18n --release -- -Z build-std=std,panic_abort
       - name: Upload Artifact JS
         uses: actions/upload-artifact@v4
