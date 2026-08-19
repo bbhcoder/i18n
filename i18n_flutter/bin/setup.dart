@@ -2,13 +2,8 @@
 import 'dart:io';
 import 'dart:isolate';
 
-const String version = 'v0.2.2';
+const String version = 'v0.2.3';
 const String githubUrl = 'https://github.com/bbhcoder/i18n/releases/download/$version';
-
-const String coiServiceWorkerContent = '''
-/*! coi-serviceworker v0.1.6 - Guido Zuidhof, licensed under MIT */
-if(typeof window==="undefined"){self.addEventListener("install",()=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("message",e=>{if(e.data==="deregister"){self.registration.unregister().then(()=>self.clients.matchAll()).then(clients=>{clients.forEach(client=>client.navigate(client.url))})}});self.addEventListener("fetch",function(e){if(e.request.cache==="only-if-cached"&&e.request.mode!=="same-origin"){return}e.respondWith(fetch(e.request).then(r=>{if(r.status===0){return r}const headers=new Headers(r.headers);headers.set("Cross-Origin-Embedder-Policy","require-corp");headers.set("Cross-Origin-Opener-Policy","same-origin");return new Response(r.body,{status:r.status,statusText:r.statusText,headers})}).catch(e=>console.error(e)))});}else{(()=>{const e=window.document.currentScript!=undefined?window.document.currentScript.src:"";if(window.sessionStorage&&window.sessionStorage.getItem("coiReloadedBySelf")){window.sessionStorage.removeItem("coiReloadedBySelf")}else if(e){if(window.crossOriginIsolated!==false)return;window.sessionStorage.setItem("coiReloadedBySelf","true");if(window.isSecureContext){window.navigator.serviceWorker.register(e).then(e=>{e.addEventListener("updatefound",()=>{console.log("Reloading page to make use of updated COOP/COEP Service Worker.");window.sessionStorage.removeItem("coiReloadedBySelf");window.location.reload()});if(e.active&&!window.crossOriginIsolated){console.log("Reloading page to make use of COOP/COEP Service Worker.");window.location.reload()}},e=>{console.error("COOP/COEP Service Worker failed to register:",e)})}else if(!window.isSecureContext){console.log("COOP/COEP Service Worker not registered, a secure context is required.")}}})()}
-''';
 
 Future main() async {
   print('🚀 Starting i18n_flutter automated setup...\n');

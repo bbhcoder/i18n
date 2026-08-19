@@ -48,7 +48,6 @@ jobs:
       - name: Rename Asset
         shell: bash
         run: |
-          # جستجوی هوشمندانه برای پیدا کردن فایل خروجی در پوشه ریلیز
           FILE_PATH=$(find . -type f -name "${{ matrix.output_name }}" | grep "/release/" | head -n 1)
           echo "Found binary at: $FILE_PATH"
           mv "$FILE_PATH" ${{ matrix.asset_name }}
@@ -100,21 +99,17 @@ jobs:
         with:
           targets: aarch64-apple-ios, x86_64-apple-ios, aarch64-apple-ios-sim
       - name: Build iOS Targets
-        # با اجرای این دستورات در ریشه، فایل‌ها دقیقاً در فولدر target اصلی قرار می‌گیرند
         run: |
           cargo build -p rust_lib_i18n_flutter --release --target aarch64-apple-ios
           cargo build -p rust_lib_i18n_flutter --release --target x86_64-apple-ios
           cargo build -p rust_lib_i18n_flutter --release --target aarch64-apple-ios-sim
       - name: Create XCFramework
         run: |
-          # ترکیب معماری‌های شبیه‌ساز (اینتل و M1)
           lipo -create -output target/libencheco_i18n_sim.a target/x86_64-apple-ios/release/libencheco_i18n.a target/aarch64-apple-ios-sim/release/libencheco_i18n.a
-          # ساخت فریم‌ورک یکپارچه اپل
           xcodebuild -create-xcframework \
             -library target/aarch64-apple-ios/release/libencheco_i18n.a \
             -library target/libencheco_i18n_sim.a \
             -output encheco_i18n.xcframework
-          # فشرده‌سازی جهت آپلود
           zip -r ios-encheco_i18n.xcframework.zip encheco_i18n.xcframework
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
